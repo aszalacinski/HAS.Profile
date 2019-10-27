@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using static HAS.Profile.Feature.Profile.UpdateAppProfileToInstructor;
 
 namespace HAS.Profile.Model
 {
@@ -22,6 +23,16 @@ namespace HAS.Profile.Model
 
         public static Profile Create(string id, DateTime lastUpdate, PersonalDetails personalDetails, AppDetails appDetails)
             => new Profile(id, lastUpdate, personalDetails, appDetails);
+
+        public bool Handle(UpdateAppProfileToInstructorCommand cmd)
+        {
+            return UpdateProfileToInstructor();
+        }
+
+        private bool UpdateProfileToInstructor()
+        {
+            return AppDetails.ToInstructor();
+        }
     }
 
     public class PersonalDetails
@@ -89,6 +100,18 @@ namespace HAS.Profile.Model
 
         public static AppDetails Create(AccountType accountType, DateTime lastLogin, DateTime joinDate, IEnumerable<SubscriptionDetails> subscriptions, InstructorDetails instructorDetails)
             => new AppDetails(accountType, lastLogin, joinDate, subscriptions, instructorDetails);
+
+        public bool ToInstructor()
+        {
+            AccountType = AccountType.INSTRUCTOR;
+            return AccountType.Equals(AccountType.INSTRUCTOR);
+        }
+
+        public bool ToStudent()
+        {
+            AccountType = AccountType.STUDENT;
+            return AccountType.Equals(AccountType.STUDENT);
+        }
     }
 
     public enum AccountType
