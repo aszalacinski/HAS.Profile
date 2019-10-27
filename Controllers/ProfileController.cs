@@ -66,7 +66,10 @@ namespace HAS.Profile.Controllers
                 return NotFound();
             }
 
-            return Ok(result);
+            var uri = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/profile/{result}";
+
+            Response.Headers.Add("Location", uri);
+            return StatusCode(303);
         }
 
     }
