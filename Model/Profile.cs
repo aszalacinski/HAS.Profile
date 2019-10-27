@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using static HAS.Profile.Feature.Profile.UpdateAppProfileToInstructor;
+using static HAS.Profile.Feature.Profile.UpdateAppProfileToStudent;
 
 namespace HAS.Profile.Model
 {
@@ -29,9 +30,19 @@ namespace HAS.Profile.Model
             return UpdateProfileToInstructor();
         }
 
+        public bool Handle(UpdateAppProfileToStudentCommand cmd)
+        {
+            return UpdateProfileToStudent();
+        }
+
         private bool UpdateProfileToInstructor()
         {
             return AppDetails.ToInstructor();
+        }
+
+        private bool UpdateProfileToStudent()
+        {
+            return AppDetails.ToStudent();
         }
     }
 

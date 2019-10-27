@@ -10,6 +10,7 @@ using static HAS.Profile.Feature.Profile.AddAppProfile;
 using static HAS.Profile.Feature.Profile.GetAppProfileByAuthUserId;
 using static HAS.Profile.Feature.Profile.GetAppProfileByProfileId;
 using static HAS.Profile.Feature.Profile.UpdateAppProfileToInstructor;
+using static HAS.Profile.Feature.Profile.UpdateAppProfileToStudent;
 
 namespace HAS.Profile.Controllers
 {
@@ -62,7 +63,7 @@ namespace HAS.Profile.Controllers
         {
             var result = await _mediator.Send(new GetAppProfileByAuthUserIdQuery(userId));
 
-            if(result == null)
+            if(string.IsNullOrEmpty(result))
             {
                 return NotFound();
             }
@@ -79,7 +80,7 @@ namespace HAS.Profile.Controllers
         {
             var result = await _mediator.Send(new UpdateAppProfileToInstructorCommand(profileId));
 
-            if(result == null)
+            if(string.IsNullOrEmpty(result))
             {
                 return NotFound();
             }
@@ -91,5 +92,22 @@ namespace HAS.Profile.Controllers
 
         }
 
+        // Update Profile to Student
+        [HttpPut("{profileId}/as/st", Name = "Update Profile to Student")]
+        public async Task<IActionResult> UpdateProfileToStudent(string profileId)
+        {
+            var result = await _mediator.Send(new UpdateAppProfileToStudentCommand(profileId));
+
+            if (string.IsNullOrEmpty(result))
+            {
+                return NotFound();
+            }
+
+            var uri = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/profile/{result}";
+
+            Response.Headers.Add("Location", uri);
+            return StatusCode(303);
+
+        }
     }
 }
