@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using static HAS.Profile.Feature.Tribe.AddTribe;
+using static HAS.Profile.Feature.Tribe.GetTribeByInstructorId;
 using static HAS.Profile.Feature.Tribe.GetTribeByTribeId;
 
 namespace HAS.Profile.Controllers
@@ -36,6 +37,22 @@ namespace HAS.Profile.Controllers
             return Ok(result);
         }
 
+        [HttpGet("{instructorId}/a", Name = "Get Tribe by Instructor Id")]
+        public async Task<IActionResult> GetAllTribesById(string profileId)
+        {
+            var result = await _mediator.Send(new GetTribeByInstructorIdQuery(profileId));
+
+            if (string.IsNullOrEmpty(result))
+            {
+                return NotFound();
+            }
+
+            var uri = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/tribe/{result}";
+
+            Response.Headers.Add("Location", uri);
+            return StatusCode(303);
+        }
+
         [HttpPost("{instructorId}/a/stu", Name = "Add Student Tribe")]
         public async Task<IActionResult> AddStudentTribe(string instructorId, [FromBody] AddTribeCommand details)
         {
@@ -52,7 +69,6 @@ namespace HAS.Profile.Controllers
 
             Response.Headers.Add("Location", uri);
             return StatusCode(303);
-
         }
     }
 }

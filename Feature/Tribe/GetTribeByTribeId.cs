@@ -59,12 +59,12 @@ namespace HAS.Profile.Feature.Tribe
 
                 var projection = Builders<TribeDAO>.Projection.Expression(x => mapper.Map<GetTribeByTribeIdResult>(x));
 
-                var profile = await _db.Tribe
+                var tribe = await _db.Tribe
                                         .Find(x => x.Id == ObjectId.Parse(request.TribeId))
                                         .Project(projection)
                                         .FirstOrDefaultAsync();
 
-                return profile;
+                return tribe;
             }
         }
     }
