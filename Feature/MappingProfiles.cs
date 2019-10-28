@@ -51,7 +51,7 @@ namespace HAS.Profile.Feature
     {
         public TribeDAOProfile()
         {
-            CreateMap<Tribe, TribeDAO>()
+            CreateMap<Model.Tribe, TribeDAO>()
                 .ForMember(m => m.Id, opt => opt.MapFrom(src => string.IsNullOrEmpty(src.Id) ? ObjectId.GenerateNewId() : ObjectId.Parse(src.Id)));
             CreateMap<Member, MemberDAO>();
         }
@@ -61,7 +61,7 @@ namespace HAS.Profile.Feature
     {
         public TribeProfile()
         {
-            CreateMap<TribeDAO, Tribe>()
+            CreateMap<TribeDAO, Model.Tribe>()
                 .ForMember(m => m.Members, opt => opt.MapFrom(src => src.Members));
             CreateMap<MemberDAO, Member>();
         }

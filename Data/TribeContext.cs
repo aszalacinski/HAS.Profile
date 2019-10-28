@@ -12,15 +12,15 @@ namespace HAS.Profile.Data
     public class TribeContext
     {
         private readonly DbContext _db;
-        private IMongoCollection<TribeDAO> _profile;
+        private IMongoCollection<TribeDAO> _tribe;
 
-        public IMongoCollection<TribeDAO> Profile { get; }
+        public IMongoCollection<TribeDAO> Tribe { get; }
 
         public TribeContext(IConfiguration configuration)
         {
             _db = DbContext.Create("my-practice", configuration["MongoDB:Tribe:ConnectionString"]);
-            _profile = _db.Database.GetCollection<TribeDAO>("tribe");
-            Profile = _profile;
+            _tribe = _db.Database.GetCollection<TribeDAO>("tribe");
+            Tribe = _tribe;
         }
 
         [BsonIgnoreExtraElements]

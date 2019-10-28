@@ -21,8 +21,4 @@
     <PackageReference Include="MongoDB.Driver" Version="2.9.2" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Feature\Tribe\" />
-  </ItemGroup>
-
 </Project>
