@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using static HAS.Profile.Feature.Tribe.AddTribe;
+using static HAS.Profile.Feature.Tribe.DeleteTribe;
 using static HAS.Profile.Feature.Tribe.GetTribeByInstructorId;
 using static HAS.Profile.Feature.Tribe.GetTribeByTribeId;
 
@@ -69,6 +70,19 @@ namespace HAS.Profile.Controllers
 
             Response.Headers.Add("Location", uri);
             return StatusCode(303);
+        }
+
+        [HttpDelete("{instructorId}/arc/{tribeId}")]
+        public async Task<IActionResult> ArchiveTribe(string tribeId, string instructorId)
+        {
+            var result = await _mediator.Send(new DeleteTribeCommand(tribeId, instructorId));
+
+            if (result > 0)
+            {
+                return NoContent();
+            }
+
+            return BadRequest($"No tribes were deleted");
         }
     }
 }
