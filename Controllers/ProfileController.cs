@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using HAS.Profile.Model;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using static HAS.Profile.Feature.Profile.AddAppProfile;
+using static HAS.Profile.Feature.Profile.GetAllAppProfilesByAccounType;
 using static HAS.Profile.Feature.Profile.GetAppProfileByAuthUserId;
 using static HAS.Profile.Feature.Profile.GetAppProfileByProfileId;
 using static HAS.Profile.Feature.Profile.UpdateAppProfileToInstructor;
@@ -107,7 +109,33 @@ namespace HAS.Profile.Controllers
 
             Response.Headers.Add("Location", uri);
             return StatusCode(303);
+        }
 
+        [HttpGet("students", Name = "Get All Student Profiles")]
+        public async Task<IActionResult> GetAllStudentProfiles()
+        {
+            var result = await _mediator.Send(new GetAllAppProfilesByAccounTypeQuery(ProfileConstants.STUDENT));
+
+            if (result.Count() <= 0)
+            {
+                return Ok(new List<string>());
+            }
+
+            return Ok(result);
+        }
+
+
+        [HttpGet("instructors", Name = "Get All Instructor Profiles")]
+        public async Task<IActionResult> GetAllInstructorProfiles()
+        {
+            var result = await _mediator.Send(new GetAllAppProfilesByAccounTypeQuery(ProfileConstants.INSTRUCTOR));
+
+            if (result.Count() <= 0)
+            {
+                return Ok(new List<string>());
+            }
+
+            return Ok(result);
         }
     }
 }

@@ -45,9 +45,9 @@ namespace HAS.Profile.Controllers
         {
             var result = await _mediator.Send(new GetTribeByInstructorIdQuery(instructorId));
 
-            if (result == null)
+            if (result.Count() <= 0)
             {
-                return NotFound();
+                return Ok(new List<string>());
             }
 
             return Ok(result);

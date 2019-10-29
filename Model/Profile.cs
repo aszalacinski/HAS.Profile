@@ -182,4 +182,10 @@ namespace HAS.Profile.Model
         public static ClassDetails Create(string classId, bool liked)
             => new ClassDetails(classId, liked);
     }
+
+    public static class ProfileConstants
+    {
+        public const string STUDENT = "STUDENT";
+        public const string INSTRUCTOR = "INSTRUCTOR";
+    } 
 }
