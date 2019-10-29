@@ -13,6 +13,7 @@ using static HAS.Profile.Feature.Profile.DeleteSubscriptionFromProfile;
 using static HAS.Profile.Feature.Profile.GetAllAppProfilesByAccountType;
 using static HAS.Profile.Feature.Profile.GetAppProfileByAuthUserId;
 using static HAS.Profile.Feature.Profile.GetAppProfileByProfileId;
+using static HAS.Profile.Feature.Profile.GetSubscriptionsByProfileId;
 using static HAS.Profile.Feature.Profile.UpdateAppProfileToInstructor;
 using static HAS.Profile.Feature.Profile.UpdateAppProfileToStudent;
 
@@ -170,5 +171,19 @@ namespace HAS.Profile.Controllers
             Response.Headers.Add("Location", uri);
             return StatusCode(303);
         }
+
+        [HttpGet("{profileId}/subs", Name = "Get Subscriptions by Profile Id")]
+        public async Task<IActionResult> GetSubscriptonsByProfileId(string profileId)
+        {
+            var result = await _mediator.Send(new GetSubscriptionsByProfileIdQuery(profileId));
+
+            if (result.Count() <= 0)
+            {
+                return Ok(new List<string>());
+            }
+
+            return Ok(result);
+        }
+
     }
 }
