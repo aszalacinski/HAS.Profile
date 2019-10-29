@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using static HAS.Profile.Feature.Tribe.UpdateTribeToNonSubscription;
+using static HAS.Profile.Feature.Tribe.UpdateTribeToSubscription;
 
 namespace HAS.Profile.Model
 {
@@ -30,6 +32,28 @@ namespace HAS.Profile.Model
 
         public static Tribe Create(string id, string instructorId, string name, string description, DateTime createdDate, TribeType type, bool isSubscription, IEnumerable<Member> members)
             => new Tribe(id, instructorId, name, description, createdDate, type, isSubscription, members);
+
+        public bool Handle(UpdateTribeToSubscriptionCommand cmd)
+        {
+            return SetToSubscription();
+        }
+
+        public bool Handle(UpdateTribeToNonSubscriptionCommand cmd)
+        {
+            return SetToNonSubscription();
+        }
+
+        private bool SetToNonSubscription()
+        {
+            IsSubscription = false;
+            return IsSubscription != true;
+        }
+
+        private bool SetToSubscription()
+        {
+            IsSubscription = true;
+            return IsSubscription == true;
+        }
     }
 
     public enum TribeType
