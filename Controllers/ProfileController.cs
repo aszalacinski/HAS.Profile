@@ -16,6 +16,7 @@ using static HAS.Profile.Feature.Profile.GetAppProfileByProfileId;
 using static HAS.Profile.Feature.Profile.GetSubscriptionsByProfileId;
 using static HAS.Profile.Feature.Profile.UpdateAppProfileToInstructor;
 using static HAS.Profile.Feature.Profile.UpdateAppProfileToStudent;
+using static HAS.Profile.Feature.Profile.UpdateLastLoginTimestamp;
 
 namespace HAS.Profile.Controllers
 {
@@ -184,6 +185,20 @@ namespace HAS.Profile.Controllers
 
             return Ok(result);
         }
+
+        [HttpPut("{profileId}/ll", Name = "Update Last Login Timestamp")]
+        public async Task<IActionResult> UpdateLastLoginTimestamp(string profileId)
+        {
+            var result = await _mediator.Send(new UpdateLastLoginTimestampCommand(profileId));
+
+            if (string.IsNullOrEmpty(result))
+            {
+                return NotFound();
+            }
+
+            return Ok();
+        }
+
 
     }
 }

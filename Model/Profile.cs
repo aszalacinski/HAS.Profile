@@ -5,6 +5,7 @@ using static HAS.Profile.Feature.Profile.AddSubscriptionToProfile;
 using static HAS.Profile.Feature.Profile.DeleteSubscriptionFromProfile;
 using static HAS.Profile.Feature.Profile.UpdateAppProfileToInstructor;
 using static HAS.Profile.Feature.Profile.UpdateAppProfileToStudent;
+using static HAS.Profile.Feature.Profile.UpdateLastLoginTimestamp;
 
 namespace HAS.Profile.Model
 {
@@ -35,6 +36,8 @@ namespace HAS.Profile.Model
         public bool Handle(AddSubscriptionToProfileCommand cmd) => AppDetails.Handle(cmd);
 
         public bool Handle(DeleteSubscriptionFromProfileCommand cmd) => AppDetails.Handle(cmd);
+
+        public bool Handle(UpdateLastLoginTimestampCommand cmd) => AppDetails.Handle(cmd);
 
     }
 
@@ -126,6 +129,14 @@ namespace HAS.Profile.Model
             EndSubscription(cmd.InstructorId);
 
             return !ContainsSubscription(cmd.InstructorId);
+        }
+
+        public bool Handle(UpdateLastLoginTimestampCommand cmd)
+        {
+            var thisTime = DateTime.UtcNow;
+            LastLogin = thisTime;
+
+            return LastLogin.Equals(thisTime);
         }
 
         private bool ContainsSubscription(string instructorId) => Subscriptions.Any(x => x.InstructorId == instructorId);
