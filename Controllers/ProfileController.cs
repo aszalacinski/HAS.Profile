@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using static HAS.Profile.Feature.Profile.AddAppProfile;
-using static HAS.Profile.Feature.Profile.GetAllAppProfilesByAccounType;
+using static HAS.Profile.Feature.Profile.GetAllAppProfilesByAccountType;
 using static HAS.Profile.Feature.Profile.GetAppProfileByAuthUserId;
 using static HAS.Profile.Feature.Profile.GetAppProfileByProfileId;
 using static HAS.Profile.Feature.Profile.UpdateAppProfileToInstructor;
@@ -114,7 +114,7 @@ namespace HAS.Profile.Controllers
         [HttpGet("students", Name = "Get All Student Profiles")]
         public async Task<IActionResult> GetAllStudentProfiles()
         {
-            var result = await _mediator.Send(new GetAllAppProfilesByAccounTypeQuery(ProfileConstants.STUDENT));
+            var result = await _mediator.Send(new GetAllAppProfilesByAccountTypeQuery(ProfileConstants.STUDENT));
 
             if (result.Count() <= 0)
             {
@@ -128,7 +128,7 @@ namespace HAS.Profile.Controllers
         [HttpGet("instructors", Name = "Get All Instructor Profiles")]
         public async Task<IActionResult> GetAllInstructorProfiles()
         {
-            var result = await _mediator.Send(new GetAllAppProfilesByAccounTypeQuery(ProfileConstants.INSTRUCTOR));
+            var result = await _mediator.Send(new GetAllAppProfilesByAccountTypeQuery(ProfileConstants.INSTRUCTOR));
 
             if (result.Count() <= 0)
             {

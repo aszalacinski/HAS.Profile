@@ -9,19 +9,19 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using static HAS.Profile.Data.ProfileContext;
-using static HAS.Profile.Feature.Profile.GetAllAppProfilesByAccounType;
+using static HAS.Profile.Feature.Profile.GetAllAppProfilesByAccountType;
 
 namespace HAS.Profile.Feature.Profile
 {
-    public class GetAllAppProfilesByAccounType
+    public class GetAllAppProfilesByAccountType
     {
-        public GetAllAppProfilesByAccounType() { }
+        public GetAllAppProfilesByAccountType() { }
 
-        public class GetAllAppProfilesByAccounTypeQuery : IRequest<IEnumerable<GetAllAppProfilesByAccounTypeResult>>
+        public class GetAllAppProfilesByAccountTypeQuery : IRequest<IEnumerable<GetAllAppProfilesByAccountTypeResult>>
         { 
             public AccountType AccountType { get; private set; }
 
-            public GetAllAppProfilesByAccounTypeQuery(string accountType)
+            public GetAllAppProfilesByAccountTypeQuery(string accountType)
             {
                 AccountType aType = AccountType.NONE;
 
@@ -36,15 +36,15 @@ namespace HAS.Profile.Feature.Profile
             }
         }
 
-        public class GetAllAppProfilesByAccounTypeResult
+        public class GetAllAppProfilesByAccountTypeResult
         {
             public string Id { get; private set; }
             public DateTime LastUpdate { get; private set; }
             public PersonalDetails PersonalDetails { get; private set; }
-            public GetAllAppProfilesByAccounTypeAppDetailsResult AppDetails { get; private set; }
+            public GetAllAppProfilesByAccountTypeAppDetailsResult AppDetails { get; private set; }
         }
 
-        public class GetAllAppProfilesByAccounTypeAppDetailsResult
+        public class GetAllAppProfilesByAccountTypeAppDetailsResult
         {
             public string AccountType { get; private set; }
             public DateTime LastLogin { get; private set; }
@@ -53,34 +53,34 @@ namespace HAS.Profile.Feature.Profile
             public InstructorDetails InstructorDetails { get; private set; }
         }
 
-        public class GetAllAppProfilesByAccounTypeQueryHandler : IRequestHandler<GetAllAppProfilesByAccounTypeQuery, IEnumerable<GetAllAppProfilesByAccounTypeResult>>
+        public class GetAllAppProfilesByAccountTypeQueryHandler : IRequestHandler<GetAllAppProfilesByAccountTypeQuery, IEnumerable<GetAllAppProfilesByAccountTypeResult>>
         {
             private readonly ProfileContext _db;
             private readonly MapperConfiguration _mapperConfiguration;
 
-            public GetAllAppProfilesByAccounTypeQueryHandler(ProfileContext db)
+            public GetAllAppProfilesByAccountTypeQueryHandler(ProfileContext db)
             {
                 _db = db;
                 _mapperConfiguration = new MapperConfiguration(cfg =>
                 {
                     cfg.AddProfile<ProfileProfile>();
-                    cfg.CreateMap<ProfileDAO, GetAllAppProfilesByAccounTypeResult>()
+                    cfg.CreateMap<ProfileDAO, GetAllAppProfilesByAccountTypeResult>()
                         .ForMember(m => m.AppDetails, opt => opt.MapFrom(src => src.AppDetails))
                         .ForMember(m => m.PersonalDetails, opt => opt.MapFrom(src => src.PersonalDetails));
-                    cfg.CreateMap<AppDetailsDAO, GetAllAppProfilesByAccounTypeAppDetailsResult>()
+                    cfg.CreateMap<AppDetailsDAO, GetAllAppProfilesByAccountTypeAppDetailsResult>()
                         .ForMember(m => m.AccountType, opt => opt.MapFrom(source => Enum.GetName(typeof(AccountType), source.AccountType)));
 
                 });
             }
 
-            public async Task<IEnumerable<GetAllAppProfilesByAccounTypeResult>> Handle(GetAllAppProfilesByAccounTypeQuery request, CancellationToken cancellationToken)
+            public async Task<IEnumerable<GetAllAppProfilesByAccountTypeResult>> Handle(GetAllAppProfilesByAccountTypeQuery request, CancellationToken cancellationToken)
             {
                 var storedProfiles = await _db.Profile
                                         .Find(x => x.AppDetails.AccountType.Equals(request.AccountType))
                                         .ToListAsync();
 
                 var mapper = new Mapper(_mapperConfiguration);
-                var profiles = mapper.Map<IEnumerable<GetAllAppProfilesByAccounTypeResult>>(storedProfiles);
+                var profiles = mapper.Map<IEnumerable<GetAllAppProfilesByAccountTypeResult>>(storedProfiles);
 
                 return profiles;
             }
