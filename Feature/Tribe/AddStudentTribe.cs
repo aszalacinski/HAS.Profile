@@ -12,23 +12,23 @@ using static HAS.Profile.Data.TribeContext;
 
 namespace HAS.Profile.Feature.Tribe
 {
-    public class AddTribe
+    public class AddStudentTribe
     {
-        public AddTribe() { }
+        public AddStudentTribe() { }
 
-        public class AddTribeCommand : IRequest<string>
+        public class AddStudentTribeCommand : IRequest<string>
         {
             public string InstructorId { get; set; }
             public string Name { get; set; }
             public string Description { get; set; }
         }
 
-        public class AddTribeCommandHandler : IRequestHandler<AddTribeCommand, string>
+        public class AddStudentTribeCommandHandler : IRequestHandler<AddStudentTribeCommand, string>
         {
             private readonly TribeContext _db;
             private readonly MapperConfiguration _mapperConfiguration;
 
-            public AddTribeCommandHandler(TribeContext db)
+            public AddStudentTribeCommandHandler(TribeContext db)
             {
                 _db = db;
                 _mapperConfiguration = new MapperConfiguration(cfg =>
@@ -37,7 +37,7 @@ namespace HAS.Profile.Feature.Tribe
                 });
             }
 
-            public async Task<string> Handle(AddTribeCommand request, CancellationToken cancellationToken)
+            public async Task<string> Handle(AddStudentTribeCommand request, CancellationToken cancellationToken)
             {
                 var tribe = Model.Tribe.Create(string.Empty, request.InstructorId, request.Name, request.Description, DateTime.UtcNow, Model.TribeType.STUDENT, false, new List<Member>());
 

@@ -6,7 +6,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using static HAS.Profile.Feature.Tribe.AddTribe;
+using static HAS.Profile.Feature.Tribe.AddStudentTribe;
 using static HAS.Profile.Feature.Tribe.DeleteTribe;
 using static HAS.Profile.Feature.Tribe.GetTribeByInstructorId;
 using static HAS.Profile.Feature.Tribe.GetTribeByTribeId;
@@ -55,7 +55,7 @@ namespace HAS.Profile.Controllers
         }
 
         [HttpPost("{instructorId}/a/stu", Name = "Add Student Tribe")]
-        public async Task<IActionResult> AddStudentTribe(string instructorId, [FromBody] AddTribeCommand details)
+        public async Task<IActionResult> AddStudentTribe(string instructorId, [FromBody] AddStudentTribeCommand details)
         {
             details.InstructorId = instructorId;
 
