@@ -32,7 +32,7 @@ namespace HAS.Profile.Feature.Tribe
             public string Name { get; private set; }
             public string Description { get; private set; }
             public DateTime CreatedDate { get; private set; }
-            public TribeType Type { get; private set; }
+            public string Type { get; private set; }
             public bool IsSubscription { get; private set; }
             public IEnumerable<Member> Members { get; private set; }
         }
@@ -48,7 +48,8 @@ namespace HAS.Profile.Feature.Tribe
                 _mapperConfiguration = new MapperConfiguration(cfg =>
                 {
                     cfg.AddProfile<TribeProfile>();
-                    cfg.CreateMap<TribeDAO, GetTribeByTribeIdResult>();
+                    cfg.CreateMap<TribeDAO, GetTribeByTribeIdResult>()
+                        .ForMember(m => m.Type, opt => opt.MapFrom(src => Enum.GetName(typeof(TribeType), src.Type)));
                     cfg.CreateMap<MemberDAO, Member>();
                 });
             }
