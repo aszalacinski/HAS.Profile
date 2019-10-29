@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using static HAS.Profile.Feature.Profile.AddAppProfile;
+using static HAS.Profile.Feature.Profile.AddSubscriptionToProfile;
+using static HAS.Profile.Feature.Profile.DeleteSubscriptionFromProfile;
 using static HAS.Profile.Feature.Profile.GetAllAppProfilesByAccountType;
 using static HAS.Profile.Feature.Profile.GetAppProfileByAuthUserId;
 using static HAS.Profile.Feature.Profile.GetAppProfileByProfileId;
@@ -124,7 +126,6 @@ namespace HAS.Profile.Controllers
             return Ok(result);
         }
 
-
         [HttpGet("instructors", Name = "Get All Instructor Profiles")]
         public async Task<IActionResult> GetAllInstructorProfiles()
         {
@@ -136,6 +137,38 @@ namespace HAS.Profile.Controllers
             }
 
             return Ok(result);
+        }
+
+        [HttpPut("{profileId}/sub/add/{instructorId}", Name = "Add Subscription to Profile")]
+        public async Task<IActionResult> AddSubscriptionToProfile(string profileId, string instructorId)
+        {
+            var result = await _mediator.Send(new AddSubscriptionToProfileCommand(profileId, instructorId));
+
+            if (string.IsNullOrEmpty(result))
+            {
+                return NotFound();
+            }
+
+            var uri = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/profile/{result}";
+
+            Response.Headers.Add("Location", uri);
+            return StatusCode(303);
+        }
+
+        [HttpPut("{profileId}/sub/rm/{instructorId}", Name = "Remove Subscription from Profile")]
+        public async Task<IActionResult> RemoveSubscriptonFromProfile(string profileId, string instructorId)
+        {
+            var result = await _mediator.Send(new DeleteSubscriptionFromProfileCommand(profileId, instructorId));
+
+            if (string.IsNullOrEmpty(result))
+            {
+                return NotFound();
+            }
+
+            var uri = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/profile/{result}";
+
+            Response.Headers.Add("Location", uri);
+            return StatusCode(303);
         }
     }
 }

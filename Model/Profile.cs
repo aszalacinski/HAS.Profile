@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using static HAS.Profile.Feature.Profile.AddSubscriptionToProfile;
+using static HAS.Profile.Feature.Profile.DeleteSubscriptionFromProfile;
 using static HAS.Profile.Feature.Profile.UpdateAppProfileToInstructor;
 using static HAS.Profile.Feature.Profile.UpdateAppProfileToStudent;
 
@@ -25,25 +28,14 @@ namespace HAS.Profile.Model
         public static Profile Create(string id, DateTime lastUpdate, PersonalDetails personalDetails, AppDetails appDetails)
             => new Profile(id, lastUpdate, personalDetails, appDetails);
 
-        public bool Handle(UpdateAppProfileToInstructorCommand cmd)
-        {
-            return UpdateProfileToInstructor();
-        }
+        public bool Handle(UpdateAppProfileToInstructorCommand cmd) => AppDetails.ToInstructor();
 
-        public bool Handle(UpdateAppProfileToStudentCommand cmd)
-        {
-            return UpdateProfileToStudent();
-        }
+        public bool Handle(UpdateAppProfileToStudentCommand cmd) => AppDetails.ToStudent();
 
-        private bool UpdateProfileToInstructor()
-        {
-            return AppDetails.ToInstructor();
-        }
+        public bool Handle(AddSubscriptionToProfileCommand cmd) => AppDetails.Handle(cmd);
 
-        private bool UpdateProfileToStudent()
-        {
-            return AppDetails.ToStudent();
-        }
+        public bool Handle(DeleteSubscriptionFromProfileCommand cmd) => AppDetails.Handle(cmd);
+
     }
 
     public class PersonalDetails
@@ -111,6 +103,49 @@ namespace HAS.Profile.Model
 
         public static AppDetails Create(AccountType accountType, DateTime lastLogin, DateTime joinDate, IEnumerable<SubscriptionDetails> subscriptions, InstructorDetails instructorDetails)
             => new AppDetails(accountType, lastLogin, joinDate, subscriptions, instructorDetails);
+
+        public bool Handle(AddSubscriptionToProfileCommand cmd)
+        {
+            if(ContainsSubscription(cmd.InstructorId))
+            {
+                return true;
+            }
+
+            EnableSubscription(cmd.InstructorId);
+
+            return ContainsSubscription(cmd.InstructorId);
+        }
+
+        public bool Handle(DeleteSubscriptionFromProfileCommand cmd)
+        {
+            if(!ContainsSubscription(cmd.InstructorId))
+            {
+                return true;
+            }
+
+            EndSubscription(cmd.InstructorId);
+
+            return !ContainsSubscription(cmd.InstructorId);
+        }
+
+        private bool ContainsSubscription(string instructorId) => Subscriptions.Any(x => x.InstructorId == instructorId);
+
+        private bool EnableSubscription(string instructorId)
+        {
+            var list = Subscriptions.ToList();
+            list.Add(SubscriptionDetails.Create(instructorId, new List<ClassDetails>()));
+            this.Subscriptions = list;
+            return ContainsSubscription(instructorId);
+        }
+
+        private bool EndSubscription(string instructorId)
+        {
+            var list = Subscriptions.ToList();
+            var index = list.FindIndex(x => x.InstructorId == instructorId);
+            list.Remove(list[index]);
+            Subscriptions = list;
+            return ContainsSubscription(instructorId);
+        }
 
         public bool ToInstructor()
         {
