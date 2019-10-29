@@ -199,6 +199,8 @@ namespace HAS.Profile.Controllers
             return Ok();
         }
 
-
+        // TODO: Update Personal Details
+        // TODO: Update Location Details
+        // TODO: Update App Details
     }
 }

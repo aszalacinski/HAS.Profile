@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using static HAS.Profile.Feature.Tribe.AddStudentToTribe;
 using static HAS.Profile.Feature.Tribe.UpdateTribeToNonSubscription;
 using static HAS.Profile.Feature.Tribe.UpdateTribeToSubscription;
 
@@ -43,6 +45,16 @@ namespace HAS.Profile.Model
             return SetToNonSubscription();
         }
 
+        public bool Handle(AddStudentToTribeCommand cmd)
+        {
+            if(IsStudent())
+            {
+                return AddMember(cmd.StudentId);
+            }
+
+            return IsStudent();
+        }
+
         private bool SetToNonSubscription()
         {
             IsSubscription = false;
@@ -54,6 +66,36 @@ namespace HAS.Profile.Model
             IsSubscription = true;
             return IsSubscription == true;
         }
+
+        private bool AddMember(string profileId)
+        {
+            if(!Members.Any(x => x.Id == profileId))
+            {
+                var list = Members.ToList();
+                list.Add(Member.Create(profileId, DateTime.UtcNow));
+                Members = list;
+            }
+
+            return Members.Any(x => x.Id == profileId);
+        }
+
+        private bool RemoveMember(string profileId)
+        {
+            if(Members.Any(x => x.Id == profileId))
+            {
+                var list = Members.ToList();
+                var index = list.FindIndex(x => x.Id == profileId);
+                list.Remove(list[index]);
+                Members = list;
+            }
+
+            return !Members.Any(x => x.Id == profileId);
+        }
+
+        private bool IsStudent() => Type == TribeType.STUDENT;
+        private bool IsSolo() => Type == TribeType.SOLO;
+
+
     }
 
     public enum TribeType

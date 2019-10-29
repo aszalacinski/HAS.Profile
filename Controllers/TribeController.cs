@@ -6,6 +6,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using static HAS.Profile.Feature.Tribe.AddStudentToTribe;
 using static HAS.Profile.Feature.Tribe.AddStudentTribe;
 using static HAS.Profile.Feature.Tribe.DeleteTribe;
 using static HAS.Profile.Feature.Tribe.GetTribeByInstructorId;
@@ -115,5 +116,25 @@ namespace HAS.Profile.Controllers
             Response.Headers.Add("Location", uri);
             return StatusCode(303);
         }
+
+
+        [HttpPut("{instructorId}/{tribeId}/a/{studentId}", Name = "Add Student to a Tribe")]
+        public async Task<IActionResult> AddStudentToTribe(string instructorId, string tribeId, string studentId)
+        {
+            var result = await _mediator.Send(new AddStudentToTribeCommand(instructorId, tribeId, studentId));
+
+            if (string.IsNullOrEmpty(result))
+            {
+                return NotFound();
+            }
+
+            var uri = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/tribe/{result}";
+
+            Response.Headers.Add("Location", uri);
+            return StatusCode(303);
+        }
+        // TODO: Remove Student from Tribe
+        // TODO: Get All Tribes by Student
+        // TODO: Update Tribe
     }
 }
