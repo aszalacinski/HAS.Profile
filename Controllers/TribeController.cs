@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using static HAS.Profile.Feature.Tribe.AddStudentToTribe;
 using static HAS.Profile.Feature.Tribe.AddStudentTribe;
+using static HAS.Profile.Feature.Tribe.DeleteStudentFromTribe;
 using static HAS.Profile.Feature.Tribe.DeleteTribe;
 using static HAS.Profile.Feature.Tribe.GetTribeByInstructorId;
 using static HAS.Profile.Feature.Tribe.GetTribeByTribeId;
@@ -73,7 +74,7 @@ namespace HAS.Profile.Controllers
         }
 
         [HttpDelete("{instructorId}/arc/{tribeId}", Name = "Delete Tribe")]
-        public async Task<IActionResult> ArchiveTribe(string tribeId, string instructorId)
+        public async Task<IActionResult> DeleteTribe(string tribeId, string instructorId)
         {
             var result = await _mediator.Send(new DeleteTribeCommand(tribeId, instructorId));
 
@@ -133,7 +134,22 @@ namespace HAS.Profile.Controllers
             Response.Headers.Add("Location", uri);
             return StatusCode(303);
         }
-        // TODO: Remove Student from Tribe
+
+        [HttpDelete("{instructorId}/{tribeId}/r/{studentId}", Name = "Delete Student from Tribe")]
+        public async Task<IActionResult> DeleteStudentFromTribe(string instructorId, string tribeId, string studentId)
+        {
+            var result = await _mediator.Send(new DeleteStudentFromTribeCommand(instructorId, tribeId, studentId));
+
+            if (string.IsNullOrEmpty(result))
+            {
+                return NoContent();
+            }
+
+            var uri = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/tribe/{result}";
+
+            Response.Headers.Add("Location", uri);
+            return StatusCode(303);
+        }
         // TODO: Get All Tribes by Student
         // TODO: Update Tribe
     }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using static HAS.Profile.Feature.Tribe.AddStudentToTribe;
+using static HAS.Profile.Feature.Tribe.DeleteStudentFromTribe;
 using static HAS.Profile.Feature.Tribe.UpdateTribeToNonSubscription;
 using static HAS.Profile.Feature.Tribe.UpdateTribeToSubscription;
 
@@ -47,12 +48,22 @@ namespace HAS.Profile.Model
 
         public bool Handle(AddStudentToTribeCommand cmd)
         {
-            if(IsStudent())
+            if(IsStudentTribe())
             {
                 return AddMember(cmd.StudentId);
             }
 
-            return IsStudent();
+            return false;
+        }
+
+        public bool Handle(DeleteStudentFromTribeCommand cmd)
+        {
+            if(cmd.InstructorId != cmd.StudentId)
+            {
+                return RemoveMember(cmd.StudentId);
+            }
+
+            return false;
         }
 
         private bool SetToNonSubscription()
@@ -92,8 +103,8 @@ namespace HAS.Profile.Model
             return !Members.Any(x => x.Id == profileId);
         }
 
-        private bool IsStudent() => Type == TribeType.STUDENT;
-        private bool IsSolo() => Type == TribeType.SOLO;
+        private bool IsStudentTribe() => Type == TribeType.STUDENT;
+        private bool IsSoloTribe() => Type == TribeType.SOLO;
 
 
     }
