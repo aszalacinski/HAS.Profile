@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using static HAS.Profile.Feature.Tribe.AddStudentToTribe;
 using static HAS.Profile.Feature.Tribe.DeleteStudentFromTribe;
+using static HAS.Profile.Feature.Tribe.UpdateTribe;
 using static HAS.Profile.Feature.Tribe.UpdateTribeToNonSubscription;
 using static HAS.Profile.Feature.Tribe.UpdateTribeToSubscription;
 
@@ -64,6 +65,14 @@ namespace HAS.Profile.Model
             }
 
             return false;
+        }
+
+        public bool Handle(UpdateTribeCommand cmd)
+        {
+            Name = cmd.Name;
+            Description = cmd.Description;
+
+            return Name == cmd.Name && Description == cmd.Description;
         }
 
         private bool SetToNonSubscription()

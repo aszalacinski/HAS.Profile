@@ -4,10 +4,8 @@ using HAS.Profile.Model;
 using MediatR;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using static HAS.Profile.Data.ProfileContext;
 using static HAS.Profile.Data.TribeContext;
 
 namespace HAS.Profile.Feature.Tribe
