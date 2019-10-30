@@ -17,6 +17,8 @@ using static HAS.Profile.Feature.Profile.GetSubscriptionsByProfileId;
 using static HAS.Profile.Feature.Profile.UpdateAppProfileToInstructor;
 using static HAS.Profile.Feature.Profile.UpdateAppProfileToStudent;
 using static HAS.Profile.Feature.Profile.UpdateLastLoginTimestamp;
+using static HAS.Profile.Feature.Profile.UpdateLocationDetails;
+using static HAS.Profile.Feature.Profile.UpdatePersonalDetails;
 
 namespace HAS.Profile.Controllers
 {
@@ -199,8 +201,41 @@ namespace HAS.Profile.Controllers
             return Ok();
         }
 
-        // TODO: Update Personal Details
-        // TODO: Update Location Details
+        [HttpPut("{profileId}/upd")]
+        public async Task<IActionResult> UpdatePersonalDetails(string profileId, [FromBody] UpdatePersonalDetailsCommand dto)
+        {
+            dto.ProfileId = profileId;
+
+            var result = await _mediator.Send(dto);
+
+            if (string.IsNullOrEmpty(result))
+            {
+                return NotFound();
+            }
+
+            var uri = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/profile/{result}";
+
+            Response.Headers.Add("Location", uri);
+            return StatusCode(303);
+        }
+
+        [HttpPut("{profileId}/loc")]
+        public async Task<IActionResult> UpdateLocation(string profileId, [FromBody] UpdateLocationDetailsCommand dto)
+        {
+            dto.ProfileId = profileId;
+
+            var result = await _mediator.Send(dto);
+
+            if (string.IsNullOrEmpty(result))
+            {
+                return NotFound();
+            }
+
+            var uri = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/profile/{result}";
+
+            Response.Headers.Add("Location", uri);
+            return StatusCode(303);
+        }
         // TODO: Update App Details
     }
 }

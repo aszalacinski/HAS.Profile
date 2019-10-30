@@ -6,6 +6,8 @@ using static HAS.Profile.Feature.Profile.DeleteSubscriptionFromProfile;
 using static HAS.Profile.Feature.Profile.UpdateAppProfileToInstructor;
 using static HAS.Profile.Feature.Profile.UpdateAppProfileToStudent;
 using static HAS.Profile.Feature.Profile.UpdateLastLoginTimestamp;
+using static HAS.Profile.Feature.Profile.UpdateLocationDetails;
+using static HAS.Profile.Feature.Profile.UpdatePersonalDetails;
 
 namespace HAS.Profile.Model
 {
@@ -39,6 +41,9 @@ namespace HAS.Profile.Model
 
         public bool Handle(UpdateLastLoginTimestampCommand cmd) => AppDetails.Handle(cmd);
 
+        public bool Handle(UpdatePersonalDetailsCommand cmd) => PersonalDetails.Handle(cmd);
+
+        public bool Handle(UpdateLocationDetailsCommand cmd) => PersonalDetails.Handle(cmd);
     }
 
     public class PersonalDetails
@@ -64,6 +69,17 @@ namespace HAS.Profile.Model
 
         public static PersonalDetails Create(string userId, string email, string screenName, string firstName, string lastName, LocationDetails locationDetails)
             => new PersonalDetails(userId, email, screenName, firstName, lastName, locationDetails);
+
+        public bool Handle(UpdatePersonalDetailsCommand cmd)
+        {
+            ScreenName = cmd.ScreenName;
+            FirstName = cmd.FirstName;
+            LastName = cmd.LastName;
+
+            return ScreenName == cmd.ScreenName && FirstName == cmd.FirstName && LastName == cmd.LastName;
+        }
+        public bool Handle(UpdateLocationDetailsCommand cmd) => Location.Handle(cmd);
+
     }
 
     public class LocationDetails
@@ -83,6 +99,15 @@ namespace HAS.Profile.Model
 
         public static LocationDetails Create(string country, string city, string stateProvince)
             => new LocationDetails(country, city, stateProvince);
+
+        public bool Handle(UpdateLocationDetailsCommand cmd)
+        {
+            Country = cmd.Country;
+            City = cmd.City;
+            StateProvince = cmd.StateProvince;
+
+            return Country == cmd.Country && City == cmd.City && StateProvince == cmd.StateProvince;
+        }
     }
 
     public class AppDetails
