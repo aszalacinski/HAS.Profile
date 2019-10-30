@@ -10,6 +10,7 @@ using static HAS.Profile.Feature.Tribe.AddStudentToTribe;
 using static HAS.Profile.Feature.Tribe.AddStudentTribe;
 using static HAS.Profile.Feature.Tribe.DeleteStudentFromTribe;
 using static HAS.Profile.Feature.Tribe.DeleteTribe;
+using static HAS.Profile.Feature.Tribe.GetAllTribesByStudent;
 using static HAS.Profile.Feature.Tribe.GetTribeByInstructorId;
 using static HAS.Profile.Feature.Tribe.GetTribeByTribeId;
 using static HAS.Profile.Feature.Tribe.UpdateTribeToNonSubscription;
@@ -150,7 +151,19 @@ namespace HAS.Profile.Controllers
             Response.Headers.Add("Location", uri);
             return StatusCode(303);
         }
-        // TODO: Get All Tribes by Student
+
+        [HttpGet("{studentId}/s", Name = "Get All Tribes By Student")]
+        public async Task<IActionResult> GetAllTribesByStudent(string studentId)
+        {
+            var result = await _mediator.Send(new GetAllTribesByStudentQuery(studentId));
+
+            if (result.Count() <= 0)
+            {
+                return Ok(new List<string>());
+            }
+
+            return Ok(result);
+        }
         // TODO: Update Tribe
     }
 }
