@@ -1,10 +1,9 @@
 ﻿using AutoMapper;
 using HAS.Profile.Data;
+using HAS.Profile.Feature.EventLog;
 using MediatR;
 using MongoDB.Driver;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using static HAS.Profile.Data.TribeContext;
@@ -16,10 +15,11 @@ namespace HAS.Profile.Feature.Tribe
     {
         public UpdateTribeToSubscription() { }
 
-        public class UpdateTribeToSubscriptionCommand : IRequest<string>
+        public class UpdateTribeToSubscriptionCommand : IRequest<string>, ICommandEvent
         {
             public string TribeId { get; set; }
             public string InstructorId { get; set; }
+
             public UpdateTribeToSubscriptionCommand(string tribeId, string instructorId)
             {
                 TribeId = tribeId;

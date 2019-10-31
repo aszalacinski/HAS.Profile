@@ -236,6 +236,5 @@ namespace HAS.Profile.Controllers
             Response.Headers.Add("Location", uri);
             return StatusCode(303);
         }
-        // TODO: Update App Details
     }
 }

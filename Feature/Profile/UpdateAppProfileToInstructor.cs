@@ -1,11 +1,10 @@
 ﻿using AutoMapper;
 using HAS.Profile.Data;
+using HAS.Profile.Feature.EventLog;
 using HAS.Profile.Model;
 using MediatR;
 using MongoDB.Driver;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using static HAS.Profile.Data.ProfileContext;
@@ -17,7 +16,7 @@ namespace HAS.Profile.Feature.Profile
     {
         public UpdateAppProfileToInstructor() { }
 
-        public class UpdateAppProfileToInstructorCommand : IRequest<string>
+        public class UpdateAppProfileToInstructorCommand : IRequest<string>, ICommandEvent
         {
             public string ProfileId { get; set; }
             public UpdateAppProfileToInstructorCommand(string profileId) => ProfileId = profileId;

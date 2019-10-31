@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using HAS.Profile.Data;
+using HAS.Profile.Feature.EventLog;
 using HAS.Profile.Model;
 using MediatR;
 using System;
@@ -14,7 +15,7 @@ namespace HAS.Profile.Feature.Tribe
     {
         public AddStudentTribe() { }
 
-        public class AddStudentTribeCommand : IRequest<string>
+        public class AddStudentTribeCommand : IRequest<string>, ICommandEvent
         {
             public string InstructorId { get; set; }
             public string Name { get; set; }

@@ -1,4 +1,5 @@
 ﻿using HAS.Profile.Data;
+using HAS.Profile.Feature.EventLog;
 using MediatR;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -13,7 +14,7 @@ namespace HAS.Profile.Feature.Tribe
 {
     public class DeleteTribe
     {
-        public class DeleteTribeCommand : IRequest<long>
+        public class DeleteTribeCommand : IRequest<long>, ICommandEvent
         {
             public string TribeId { get; set; }
 

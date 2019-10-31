@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using HAS.Profile.Data;
+using HAS.Profile.Feature.EventLog;
 using MediatR;
 using MongoDB.Driver;
 using System;
@@ -16,7 +17,7 @@ namespace HAS.Profile.Feature.Tribe
     {
         public UpdateTribeToNonSubscription() { }
 
-        public class UpdateTribeToNonSubscriptionCommand : IRequest<string>
+        public class UpdateTribeToNonSubscriptionCommand : IRequest<string>, ICommandEvent
         {
             public string TribeId { get; set; }
             public string InstructorId { get; set; }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using HAS.Profile.Data;
+using HAS.Profile.Feature.EventLog;
 using HAS.Profile.Model;
 using MediatR;
 using MongoDB.Driver;
@@ -14,7 +15,7 @@ namespace HAS.Profile.Feature.Tribe
 {
     public class UpdateTribe
     {
-        public class UpdateTribeCommand : IRequest<string>
+        public class UpdateTribeCommand : IRequest<string>, ICommandEvent
         {
             public string InstructorId { get; set; }
             public string TribeId { get; set; }

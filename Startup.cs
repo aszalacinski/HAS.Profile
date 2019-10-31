@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using HAS.Profile.ApplicationServices.Messaging;
 using HAS.Profile.Data;
+using HAS.Profile.Feature.EventLog;
 using IdentityServer4.AccessTokenValidation;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
@@ -52,6 +54,15 @@ namespace HAS.Profile
 
             services.AddScoped<ProfileContext>();
             services.AddScoped<TribeContext>();
+            services.AddSingleton<IQueueService>(opt =>
+            {
+                var queueService = AzureStorageQueueService.Create(Configuration["Azure:Storage:ConnectionString"]);
+                queueService.CreateQueue(Configuration["Azure:Storage:Queue:LogEventMPY:Name"]).Wait();
+
+                return queueService;
+            });
+
+            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(EventLogBehavior<,>));
 
             services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
                 .AddIdentityServerAuthentication(options =>

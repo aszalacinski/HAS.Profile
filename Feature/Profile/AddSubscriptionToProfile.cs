@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using HAS.Profile.Data;
+using HAS.Profile.Feature.EventLog;
 using HAS.Profile.Model;
 using MediatR;
 using MongoDB.Driver;
@@ -17,7 +18,7 @@ namespace HAS.Profile.Feature.Profile
     {
         public AddSubscriptionToProfile() { }
 
-        public class AddSubscriptionToProfileCommand : IRequest<string>
+        public class AddSubscriptionToProfileCommand : IRequest<string>, ICommandEvent
         {
             public string ProfileId { get; private set; }
             public string InstructorId { get; private set; }

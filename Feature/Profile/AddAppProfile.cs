@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using HAS.Profile.Data;
+using HAS.Profile.Feature.EventLog;
 using HAS.Profile.Model;
 using MediatR;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using static HAS.Profile.Data.ProfileContext;
@@ -17,7 +17,7 @@ namespace HAS.Profile.Feature.Profile
 
         public AddAppProfile(IMediator mediator) => _mediator = mediator;
 
-        public class AddAppProfileCommand : IRequest<string>
+        public class AddAppProfileCommand : IRequest<string>, ICommandEvent
         {
             public string UserId { get; set; }
             public string Email { get; set; }
