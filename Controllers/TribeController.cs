@@ -19,7 +19,7 @@ using static HAS.Profile.Feature.Tribe.UpdateTribeToSubscription;
 
 namespace HAS.Profile.Controllers
 {
-    [AllowAnonymous]
+    [Authorize]
     [Route("[controller]")]
     [ApiController]
     public class TribeController : ControllerBase
@@ -62,17 +62,15 @@ namespace HAS.Profile.Controllers
         {
             details.InstructorId = instructorId;
 
-            var result = await _mediator.Send(details);
+            var tribeId = await _mediator.Send(details);
 
-            if(string.IsNullOrEmpty(result))
+            if(string.IsNullOrEmpty(tribeId))
             {
                 return NotFound();
             }
 
-            var uri = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/tribe/{result}";
-
-            Response.Headers.Add("Location", uri);
-            return StatusCode(303);
+            var tribe = await _mediator.Send(new GetTribeByTribeIdQuery(tribeId));
+            return Ok(tribe);
         }
 
         [HttpDelete("{instructorId}/arc/{tribeId}", Name = "Delete Tribe")]
@@ -98,10 +96,8 @@ namespace HAS.Profile.Controllers
                 return NotFound();
             }
 
-            var uri = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/tribe/{result}";
-
-            Response.Headers.Add("Location", uri);
-            return StatusCode(303);
+            var tribe = await _mediator.Send(new GetTribeByTribeIdQuery(tribeId));
+            return Ok(tribe);
         }
 
         [HttpPut("{instructorId}/{tribeId}/nsub", Name = "Set Tribe to Non Subscription")]
@@ -114,10 +110,8 @@ namespace HAS.Profile.Controllers
                 return NotFound();
             }
 
-            var uri = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/tribe/{result}";
-
-            Response.Headers.Add("Location", uri);
-            return StatusCode(303);
+            var tribe = await _mediator.Send(new GetTribeByTribeIdQuery(tribeId));
+            return Ok(tribe);
         }
 
 
@@ -131,10 +125,8 @@ namespace HAS.Profile.Controllers
                 return NotFound();
             }
 
-            var uri = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/tribe/{result}";
-
-            Response.Headers.Add("Location", uri);
-            return StatusCode(303);
+            var tribe = await _mediator.Send(new GetTribeByTribeIdQuery(tribeId));
+            return Ok(tribe);
         }
 
         [HttpDelete("{instructorId}/{tribeId}/r/{studentId}", Name = "Delete Student from Tribe")]
@@ -147,10 +139,8 @@ namespace HAS.Profile.Controllers
                 return NoContent();
             }
 
-            var uri = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/tribe/{result}";
-
-            Response.Headers.Add("Location", uri);
-            return StatusCode(303);
+            var tribe = await _mediator.Send(new GetTribeByTribeIdQuery(tribeId));
+            return Ok(tribe);
         }
 
         [HttpGet("{studentId}/s", Name = "Get All Tribes By Student")]
@@ -179,10 +169,8 @@ namespace HAS.Profile.Controllers
                 return NoContent();
             }
 
-            var uri = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/tribe/{result}";
-
-            Response.Headers.Add("Location", uri);
-            return StatusCode(303);
+            var tribe = await _mediator.Send(new GetTribeByTribeIdQuery(tribeId));
+            return Ok(tribe);
         }
     }
 }

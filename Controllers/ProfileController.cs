@@ -1,12 +1,10 @@
-﻿using System;
+﻿using HAS.Profile.Model;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using HAS.Profile.Model;
-using MediatR;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using static HAS.Profile.Feature.Profile.AddAppProfile;
 using static HAS.Profile.Feature.Profile.AddSubscriptionToProfile;
 using static HAS.Profile.Feature.Profile.DeleteSubscriptionFromProfile;
@@ -22,7 +20,7 @@ using static HAS.Profile.Feature.Profile.UpdatePersonalDetails;
 
 namespace HAS.Profile.Controllers
 {
-    [AllowAnonymous]
+    [Authorize]
     [Route("[controller]")]
     [ApiController]
     public class ProfileController : ControllerBase
@@ -38,17 +36,15 @@ namespace HAS.Profile.Controllers
         [HttpPost(Name = "Add New App Profile")]
         public async Task<IActionResult> AddNewAppProfile([FromBody] AddAppProfileCommand details)
         {
-            var result = await _mediator.Send(details);
+            var profileId = await _mediator.Send(details);
 
-            if(string.IsNullOrEmpty(result))
+            if(string.IsNullOrEmpty(profileId))
             {
                 return NotFound();
             }
-
-            var uri = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/profile/{result}";
-
-            Response.Headers.Add("Location", uri);
-            return StatusCode(303);
+            
+            var profile = await _mediator.Send(new GetAppProfileByProfileIdQuery(profileId));
+            return Ok(profile);
         }
 
         // Get App Profile by Profile Id
@@ -69,17 +65,15 @@ namespace HAS.Profile.Controllers
         [HttpGet("by/{userId}", Name ="Get App Profile by Auth User Id")]
         public async Task<IActionResult> GetAppProfileByAuthUserId(string userId)
         {
-            var result = await _mediator.Send(new GetAppProfileByAuthUserIdQuery(userId));
+            var profileId = await _mediator.Send(new GetAppProfileByAuthUserIdQuery(userId));
 
-            if(string.IsNullOrEmpty(result))
+            if(string.IsNullOrEmpty(profileId))
             {
                 return NotFound();
             }
 
-            var uri = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/profile/{result}";
-
-            Response.Headers.Add("Location", uri);
-            return StatusCode(303);
+            var profile = await _mediator.Send(new GetAppProfileByProfileIdQuery(profileId));
+            return Ok(profile);
         }
 
         // Update Profile to Instructor
@@ -93,10 +87,8 @@ namespace HAS.Profile.Controllers
                 return NotFound();
             }
 
-            var uri = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/profile/{result}";
-
-            Response.Headers.Add("Location", uri);
-            return StatusCode(303);
+            var profile = await _mediator.Send(new GetAppProfileByProfileIdQuery(profileId));
+            return Ok(profile);
 
         }
 
@@ -111,10 +103,8 @@ namespace HAS.Profile.Controllers
                 return NotFound();
             }
 
-            var uri = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/profile/{result}";
-
-            Response.Headers.Add("Location", uri);
-            return StatusCode(303);
+            var profile = await _mediator.Send(new GetAppProfileByProfileIdQuery(profileId));
+            return Ok(profile);
         }
 
         [HttpGet("students", Name = "Get All Student Profiles")]
@@ -153,10 +143,8 @@ namespace HAS.Profile.Controllers
                 return NotFound();
             }
 
-            var uri = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/profile/{result}";
-
-            Response.Headers.Add("Location", uri);
-            return StatusCode(303);
+            var profile = await _mediator.Send(new GetAppProfileByProfileIdQuery(profileId));
+            return Ok(profile);
         }
 
         [HttpPut("{profileId}/sub/rm/{instructorId}", Name = "Remove Subscription from Profile")]
@@ -169,10 +157,8 @@ namespace HAS.Profile.Controllers
                 return NotFound();
             }
 
-            var uri = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/profile/{result}";
-
-            Response.Headers.Add("Location", uri);
-            return StatusCode(303);
+            var profile = await _mediator.Send(new GetAppProfileByProfileIdQuery(profileId));
+            return Ok(profile);
         }
 
         [HttpGet("{profileId}/subs", Name = "Get Subscriptions by Profile Id")]
@@ -213,10 +199,8 @@ namespace HAS.Profile.Controllers
                 return NotFound();
             }
 
-            var uri = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/profile/{result}";
-
-            Response.Headers.Add("Location", uri);
-            return StatusCode(303);
+            var profile = await _mediator.Send(new GetAppProfileByProfileIdQuery(profileId));
+            return Ok(profile);
         }
 
         [HttpPut("{profileId}/loc")]
@@ -231,10 +215,8 @@ namespace HAS.Profile.Controllers
                 return NotFound();
             }
 
-            var uri = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/profile/{result}";
-
-            Response.Headers.Add("Location", uri);
-            return StatusCode(303);
+            var profile = await _mediator.Send(new GetAppProfileByProfileIdQuery(profileId));
+            return Ok(profile);
         }
     }
 }
