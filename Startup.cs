@@ -19,6 +19,7 @@ namespace HAS.Profile
             Configuration = configuration;
 
             var testConfig = Configuration["MPY:Version"];
+            var hasTestConfig = Configuration["HAS:Version"];
 
             Environment = env;
         }
