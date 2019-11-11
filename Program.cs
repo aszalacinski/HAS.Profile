@@ -22,23 +22,21 @@ namespace HAS.Profile
                     var config = builder.Build();
 
                     builder.AddAzureKeyVault(
-                        $"https://{config["Azure:KeyVault:MPY:Vault"]}.vault.azure.net/",
-                        config["Azure:KeyVault:MPY:ClientId"],
-                        config["Azure:KeyVault:MPY:ClientSecret"]
+                        $"https://{config["Azure.KeyVault.MPY.Vault"]}.vault.azure.net/",
+                        config["Azure.KeyVault.MPY.ClientId"],
+                        config["Azure.KeyVault.MPY.ClientSecret"]
                         );
 
                     builder.AddAzureKeyVault(
-                        $"https://{config["Azure:KeyVault:HAS:Vault"]}.vault.azure.net/",
-                        config["Azure:KeyVault:HAS:ClientId"],
-                        config["Azure:KeyVault:HAS:ClientSecret"]
+                        $"https://{config["Azure.KeyVault.HAS.Vault"]}.vault.azure.net/",
+                        config["Azure.KeyVault.HAS.ClientId"],
+                        config["Azure.KeyVault.HAS.ClientSecret"]
                         );
-
+                    
                     if (ctx.HostingEnvironment.IsDevelopment())
                     {
                         builder.AddUserSecrets<Startup>();
                     }
-
-
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
