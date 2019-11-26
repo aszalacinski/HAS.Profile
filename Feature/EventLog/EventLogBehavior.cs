@@ -1,12 +1,6 @@
 ﻿using HAS.Profile.ApplicationServices.Messaging;
-using HAS.Profile.Data;
 using MediatR;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -25,14 +19,14 @@ namespace HAS.Profile.Feature.EventLog
         {
             Model.EventLog commandLog = null;
 
+            var response = await next();
+
             if (request is ICommandEvent)
             {
                 commandLog = Model.EventLog.Create(request);
             }
 
-            var response = await next();
-
-            if(commandLog != null)
+            if (commandLog != null)
             {
                 commandLog.AddResult(response);
                 await _queueService.AddMessage(commandLog);

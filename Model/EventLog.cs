@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Reflection;
-using System.Text.Json;
 
 namespace HAS.Profile.Model
 {
@@ -23,13 +22,21 @@ namespace HAS.Profile.Model
             Event = command.GetType().Name;
 
             PropertyInfo profileInfo = command.GetType().GetProperty("ProfileId") ?? command.GetType().GetProperty("InstructorId");
-            ProfileId = (string)profileInfo.GetValue(command, null);
+            ProfileId = (string)profileInfo?.GetValue(command, null);
 
             Message = command;
         }
 
         public static EventLog Create(object item) => new EventLog(item);
 
-        public void AddResult(object result) => Result = result;
+        public void AddResult(object result)
+        {
+            Result = result;
+            if(ProfileId == null)
+            {
+                var profileId = result.ToString();
+                ProfileId = profileId;
+            }
+        }
     }
 }
