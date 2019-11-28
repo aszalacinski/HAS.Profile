@@ -42,7 +42,7 @@ namespace HAS.Profile
             services.AddScoped<TribeContext>();
             services.AddSingleton<IQueueService>(opt =>
             {
-                var queueService = AzureStorageQueueService.Create(Configuration["Azure:Storage:ConnectionString"]);
+                var queueService = AzureStorageQueueService.Create(Configuration["Azure:Storage:Events:ConnectionString"]);
                 queueService.CreateQueue(Configuration["Azure:Storage:Queue:LogEventMPY:Name"]).Wait();
 
                 return queueService;
