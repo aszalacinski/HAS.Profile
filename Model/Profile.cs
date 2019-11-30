@@ -5,6 +5,7 @@ using static HAS.Profile.Feature.Profile.AddSubscriptionToProfile;
 using static HAS.Profile.Feature.Profile.DeleteSubscriptionFromProfile;
 using static HAS.Profile.Feature.Profile.UpdateAppProfileToInstructor;
 using static HAS.Profile.Feature.Profile.UpdateAppProfileToStudent;
+using static HAS.Profile.Feature.Profile.UpdateInstructorDetails;
 using static HAS.Profile.Feature.Profile.UpdateLastLoginTimestamp;
 using static HAS.Profile.Feature.Profile.UpdateLocationDetails;
 using static HAS.Profile.Feature.Profile.UpdatePersonalDetails;
@@ -42,8 +43,10 @@ namespace HAS.Profile.Model
         public bool Handle(UpdateLastLoginTimestampCommand cmd) => AppDetails.Handle(cmd);
 
         public bool Handle(UpdatePersonalDetailsCommand cmd) => PersonalDetails.Handle(cmd);
-
+        
         public bool Handle(UpdateLocationDetailsCommand cmd) => PersonalDetails.Handle(cmd);
+
+        public bool Handle(UpdateInstructorDetailsCommand cmd) => AppDetails.InstructorDetails.Handle(cmd);
     }
 
     public class PersonalDetails
@@ -243,6 +246,13 @@ namespace HAS.Profile.Model
 
         public static InstructorDetails Create(DateTime? startDate, string registrationName = null)
             => new InstructorDetails(startDate, registrationName);
+
+        public bool Handle(UpdateInstructorDetailsCommand cmd)
+        {
+            PublicName = cmd.PublicName.Trim();
+
+            return PublicName.ToUpper().Equals(cmd.PublicName.Trim().ToUpper());
+        }
     }
 
     public class ClassDetails

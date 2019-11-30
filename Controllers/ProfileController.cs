@@ -15,6 +15,7 @@ using static HAS.Profile.Feature.Profile.GetAppProfileByPublicName;
 using static HAS.Profile.Feature.Profile.GetSubscriptionsByProfileId;
 using static HAS.Profile.Feature.Profile.UpdateAppProfileToInstructor;
 using static HAS.Profile.Feature.Profile.UpdateAppProfileToStudent;
+using static HAS.Profile.Feature.Profile.UpdateInstructorDetails;
 using static HAS.Profile.Feature.Profile.UpdateLastLoginTimestamp;
 using static HAS.Profile.Feature.Profile.UpdateLocationDetails;
 using static HAS.Profile.Feature.Profile.UpdatePersonalDetails;
@@ -82,6 +83,11 @@ namespace HAS.Profile.Controllers
         public async Task<IActionResult> UpdateProfileToInstructor([FromRoute] string profileId, [FromBody] UpdateAppProfileToInstructorCommand cmd)
         {
             cmd.ProfileId = profileId;
+
+            if(string.IsNullOrEmpty(cmd.PublicName))
+            {
+                return BadRequest($"The Instructor public name cannot be empty.");
+            }
 
             var validate = await _mediator.Send(new GetAppProfileByPublicNameQuery(cmd.PublicName));
 
@@ -205,6 +211,22 @@ namespace HAS.Profile.Controllers
             var result = await _mediator.Send(dto);
 
             if (string.IsNullOrEmpty(result))
+            {
+                return NotFound();
+            }
+
+            var profile = await _mediator.Send(new GetAppProfileByProfileIdQuery(profileId));
+            return Ok(profile);
+        }
+
+        [HttpPut("{profileId}/updi")]
+        public async Task<IActionResult> UpdateInstructorDetails(string profileId, [FromBody] UpdateInstructorDetailsCommand dto)
+        {
+            dto.ProfileId = profileId;
+
+            var result = await _mediator.Send(dto);
+
+            if(string.IsNullOrEmpty(result))
             {
                 return NotFound();
             }
