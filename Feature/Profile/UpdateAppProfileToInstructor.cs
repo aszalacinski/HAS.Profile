@@ -19,7 +19,7 @@ namespace HAS.Profile.Feature.Profile
         public class UpdateAppProfileToInstructorCommand : IRequest<string>, ICommandEvent
         {
             public string ProfileId { get; set; }
-            public UpdateAppProfileToInstructorCommand(string profileId) => ProfileId = profileId;
+            public string PublicName { get; set; }
         }
 
         public class UpdateAppProfileToInstructorCommandHandler : IRequestHandler<UpdateAppProfileToInstructorCommand, string>

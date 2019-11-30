@@ -31,7 +31,7 @@ namespace HAS.Profile.Model
         public static Profile Create(string id, DateTime lastUpdate, PersonalDetails personalDetails, AppDetails appDetails)
             => new Profile(id, lastUpdate, personalDetails, appDetails);
 
-        public bool Handle(UpdateAppProfileToInstructorCommand cmd) => AppDetails.ToInstructor();
+        public bool Handle(UpdateAppProfileToInstructorCommand cmd) => AppDetails.Handle(cmd);
 
         public bool Handle(UpdateAppProfileToStudentCommand cmd) => AppDetails.ToStudent();
 
@@ -164,6 +164,11 @@ namespace HAS.Profile.Model
             return LastLogin.Equals(thisTime);
         }
 
+        public bool Handle(UpdateAppProfileToInstructorCommand cmd)
+        {
+            return ToInstructor(cmd.PublicName);
+        }
+
         private bool ContainsSubscription(string instructorId) => Subscriptions.Any(x => x.InstructorId == instructorId);
 
         private bool EnableSubscription(string instructorId)
@@ -183,9 +188,10 @@ namespace HAS.Profile.Model
             return ContainsSubscription(instructorId);
         }
 
-        public bool ToInstructor()
+        public bool ToInstructor(string publicName)
         {
             AccountType = AccountType.INSTRUCTOR;
+            InstructorDetails = InstructorDetails.Create(DateTime.UtcNow, publicName);
             return AccountType.Equals(AccountType.INSTRUCTOR);
         }
 
@@ -225,16 +231,18 @@ namespace HAS.Profile.Model
     public class InstructorDetails
     {
         public DateTime? StartDate { get; private set; }
+        public string PublicName { get; private set; }
 
         private InstructorDetails() { }
 
-        private InstructorDetails(DateTime? startDate)
+        private InstructorDetails(DateTime? startDate, string registrationName = null)
         {
             StartDate = startDate;
+            PublicName = registrationName;
         }
 
-        public static InstructorDetails Create(DateTime? startDate)
-            => new InstructorDetails(startDate);
+        public static InstructorDetails Create(DateTime? startDate, string registrationName = null)
+            => new InstructorDetails(startDate, registrationName);
     }
 
     public class ClassDetails

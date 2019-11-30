@@ -11,6 +11,7 @@ using static HAS.Profile.Feature.Profile.DeleteSubscriptionFromProfile;
 using static HAS.Profile.Feature.Profile.GetAllAppProfilesByAccountType;
 using static HAS.Profile.Feature.Profile.GetAppProfileByAuthUserId;
 using static HAS.Profile.Feature.Profile.GetAppProfileByProfileId;
+using static HAS.Profile.Feature.Profile.GetAppProfileByPublicName;
 using static HAS.Profile.Feature.Profile.GetSubscriptionsByProfileId;
 using static HAS.Profile.Feature.Profile.UpdateAppProfileToInstructor;
 using static HAS.Profile.Feature.Profile.UpdateAppProfileToStudent;
@@ -78,9 +79,18 @@ namespace HAS.Profile.Controllers
 
         // Update Profile to Instructor
         [HttpPut("{profileId}/as/in", Name ="Update Profile to Instructor")]
-        public async Task<IActionResult> UpdateProfileToInstructor(string profileId)
+        public async Task<IActionResult> UpdateProfileToInstructor([FromRoute] string profileId, [FromBody] UpdateAppProfileToInstructorCommand cmd)
         {
-            var result = await _mediator.Send(new UpdateAppProfileToInstructorCommand(profileId));
+            cmd.ProfileId = profileId;
+
+            var validate = await _mediator.Send(new GetAppProfileByPublicNameQuery(cmd.PublicName));
+
+            if(validate != null)
+            {
+                return Conflict($"The public name provided, {cmd.PublicName}, is already in use and not available.");
+            }
+
+            var result = await _mediator.Send(cmd);
 
             if(string.IsNullOrEmpty(result))
             {

@@ -122,6 +122,9 @@ namespace HAS.Profile.Data
             [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
             [BsonElement("sdate")]
             public DateTime? StartDate { get; set; }
+
+            [BsonElement("pname")]
+            public string PublicName { get; set; }
         }
     }
 }
