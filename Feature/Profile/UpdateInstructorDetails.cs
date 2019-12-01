@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using static HAS.Profile.Data.ProfileContext;
 using static HAS.Profile.Feature.Profile.GetAppProfileByProfileId;
+using static HAS.Profile.Model.InstructorDetails;
 
 namespace HAS.Profile.Feature.Profile
 {
@@ -47,23 +48,30 @@ namespace HAS.Profile.Feature.Profile
 
                 Model.Profile profile = mapper.Map<Model.Profile>(init);
 
-                if (profile.Handle(cmd))
+                try
                 {
-                    var dao = mapper.Map<ProfileDAO>(profile);
-
-                    try
+                    if (profile.Handle(cmd))
                     {
-                        var filter = Builders<ProfileDAO>.Filter.Eq(x => x.Id, dao.Id);
-                        var options = new FindOneAndReplaceOptions<ProfileDAO> { ReturnDocument = ReturnDocument.After };
+                        var dao = mapper.Map<ProfileDAO>(profile);
 
-                        var update = await _db.Profile.FindOneAndReplaceAsync(filter, dao, options);
+                        try
+                        {
+                            var filter = Builders<ProfileDAO>.Filter.Eq(x => x.Id, dao.Id);
+                            var options = new FindOneAndReplaceOptions<ProfileDAO> { ReturnDocument = ReturnDocument.After };
 
-                        return update.Id.ToString();
+                            var update = await _db.Profile.FindOneAndReplaceAsync(filter, dao, options);
+
+                            return update.Id.ToString();
+                        }
+                        catch (Exception)
+                        {
+                            return string.Empty;
+                        }
                     }
-                    catch (Exception)
-                    {
-                        return string.Empty;
-                    }
+                }
+                catch(PublicNameFormatException ex)
+                {
+                    throw ex;
                 }
 
                 return string.Empty;

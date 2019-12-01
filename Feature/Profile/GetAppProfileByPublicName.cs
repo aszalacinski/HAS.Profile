@@ -16,7 +16,7 @@ namespace HAS.Profile.Feature.Profile
     {
         public GetAppProfileByPublicName() { }
 
-        public class GetAppProfileByPublicNameQuery : IRequest<GetAppProfileByPublicNameResult>
+        public class GetAppProfileByPublicNameQuery : IRequest<string>
         {
             public string PublicName { get; private set; }
             public GetAppProfileByPublicNameQuery(string publicName) => PublicName = publicName;
@@ -39,7 +39,7 @@ namespace HAS.Profile.Feature.Profile
             public InstructorDetails InstructorDetails { get; private set; }
         }
 
-        public class GetAppProfileByPublicNameQueryHandler : IRequestHandler<GetAppProfileByPublicNameQuery, GetAppProfileByPublicNameResult>
+        public class GetAppProfileByPublicNameQueryHandler : IRequestHandler<GetAppProfileByPublicNameQuery, string>
         {
             private readonly ProfileContext _db;
             private readonly MapperConfiguration _mapperConfiguration;
@@ -58,7 +58,7 @@ namespace HAS.Profile.Feature.Profile
                 });
             }
 
-            public async Task<GetAppProfileByPublicNameResult> Handle(GetAppProfileByPublicNameQuery query, CancellationToken cancellationToken)
+            public async Task<string> Handle(GetAppProfileByPublicNameQuery query, CancellationToken cancellationToken)
             {
                 var mapper = new Mapper(_mapperConfiguration);
 
@@ -69,7 +69,7 @@ namespace HAS.Profile.Feature.Profile
                                         .Project(projection)
                                         .FirstOrDefaultAsync();
 
-                return profile;
+                return profile?.Id;
             }
         }
     }

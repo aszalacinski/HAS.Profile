@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -78,6 +79,21 @@ namespace HAS.Profile.Controllers
             return Ok(profile);
         }
 
+        // Get AppProfile by Instructor Public name
+        [HttpGet("by/publicName/{publicName}", Name="Get App Profile by Instructor Public Name")]
+        public async Task<IActionResult> GetAppProfileByPublicName(string publicName)
+        {
+            var profileId = await _mediator.Send(new GetAppProfileByPublicNameQuery(publicName));
+
+            if(string.IsNullOrEmpty(profileId))
+            {
+                return NotFound();
+            }
+
+            var profile = await _mediator.Send(new GetAppProfileByProfileIdQuery(profileId));
+            return Ok(profile);
+        }
+
         // Update Profile to Instructor
         [HttpPut("{profileId}/as/in", Name ="Update Profile to Instructor")]
         public async Task<IActionResult> UpdateProfileToInstructor([FromRoute] string profileId, [FromBody] UpdateAppProfileToInstructorCommand cmd)
@@ -91,7 +107,7 @@ namespace HAS.Profile.Controllers
 
             var validate = await _mediator.Send(new GetAppProfileByPublicNameQuery(cmd.PublicName));
 
-            if(validate != null)
+            if(!string.IsNullOrEmpty(validate))
             {
                 return Conflict($"The public name provided, {cmd.PublicName}, is already in use and not available.");
             }
@@ -223,16 +239,22 @@ namespace HAS.Profile.Controllers
         public async Task<IActionResult> UpdateInstructorDetails(string profileId, [FromBody] UpdateInstructorDetailsCommand dto)
         {
             dto.ProfileId = profileId;
-
-            var result = await _mediator.Send(dto);
-
-            if(string.IsNullOrEmpty(result))
+            try
             {
-                return NotFound();
-            }
+                var result = await _mediator.Send(dto);
 
-            var profile = await _mediator.Send(new GetAppProfileByProfileIdQuery(profileId));
-            return Ok(profile);
+                if (string.IsNullOrEmpty(result))
+                {
+                    return NotFound();
+                }
+
+                var profile = await _mediator.Send(new GetAppProfileByProfileIdQuery(profileId));
+                return Ok(profile);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPut("{profileId}/loc")]

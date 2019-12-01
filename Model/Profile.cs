@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using static HAS.Profile.Feature.Profile.AddSubscriptionToProfile;
 using static HAS.Profile.Feature.Profile.DeleteSubscriptionFromProfile;
 using static HAS.Profile.Feature.Profile.UpdateAppProfileToInstructor;
@@ -249,9 +250,23 @@ namespace HAS.Profile.Model
 
         public bool Handle(UpdateInstructorDetailsCommand cmd)
         {
-            PublicName = cmd.PublicName.Trim();
+            string pName = cmd.PublicName.Trim();
 
-            return PublicName.ToUpper().Equals(cmd.PublicName.Trim().ToUpper());
+            var regexCheck = new Regex("^[a-zA-Z0-9]*$");
+
+            if(!regexCheck.IsMatch(pName))
+            {
+                throw new PublicNameFormatException($"Public Names cannot contain spaces or special characters.");
+            }
+
+            PublicName = pName;
+
+            return pName.ToUpper().Equals(cmd.PublicName.Trim().ToUpper());
+        }
+
+        public class PublicNameFormatException : Exception
+        {
+            public PublicNameFormatException(string message) : base(message) { }
         }
     }
 
