@@ -13,6 +13,7 @@ using static HAS.Profile.Feature.Tribe.DeleteTribe;
 using static HAS.Profile.Feature.Tribe.GetAllTribesByStudent;
 using static HAS.Profile.Feature.Tribe.GetTribeByInstructorId;
 using static HAS.Profile.Feature.Tribe.GetTribeByTribeId;
+using static HAS.Profile.Feature.Tribe.UpdateSubscriptionDetails;
 using static HAS.Profile.Feature.Tribe.UpdateTribe;
 using static HAS.Profile.Feature.Tribe.UpdateTribeToNonSubscription;
 using static HAS.Profile.Feature.Tribe.UpdateTribeToSubscription;
@@ -165,6 +166,22 @@ namespace HAS.Profile.Controllers
             var result = await _mediator.Send(dto);
 
             if (string.IsNullOrEmpty(result))
+            {
+                return NoContent();
+            }
+
+            var tribe = await _mediator.Send(new GetTribeByTribeIdQuery(tribeId));
+            return Ok(tribe);
+        }
+        
+        [HttpPut("{instructorId}/u/{tribeId}/subrate/{rate}")]
+        public async Task<IActionResult> UpdateTribeSubscriptionRate(string instructorId, string tribeId, int rate)
+        {
+            UpdateSubscriptionDetailsCommand cmd = new UpdateSubscriptionDetailsCommand(instructorId, tribeId, rate);
+
+            var result = await _mediator.Send(cmd);
+
+            if(string.IsNullOrEmpty(result))
             {
                 return NoContent();
             }

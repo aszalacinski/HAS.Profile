@@ -55,6 +55,8 @@ namespace HAS.Profile.Feature
                 .ForMember(m => m.Id, opt => opt.MapFrom(src => string.IsNullOrEmpty(src.Id) ? ObjectId.GenerateNewId() : ObjectId.Parse(src.Id)));
             CreateMap<Member, MemberDAO>()
                 .ForMember(m => m.Id, opt => opt.MapFrom(src => string.IsNullOrEmpty(src.Id) ? ObjectId.GenerateNewId() : ObjectId.Parse(src.Id)));
+            CreateMap<TribeSubscriptionDetails, TribeSubscriptionDetailsDAO>();
+            CreateMap<SubscriptionRate, SubscriptionRateDAO>();
         }
     }
 
@@ -65,6 +67,11 @@ namespace HAS.Profile.Feature
             CreateMap<TribeDAO, Model.Tribe>()
                 .ForMember(m => m.Members, opt => opt.MapFrom(src => src.Members));
             CreateMap<MemberDAO, Member>();
+            CreateMap<TribeSubscriptionDetailsDAO, TribeSubscriptionDetails>()
+                .ForMember(m => m.Rates, opt => opt.MapFrom(src => src.Rates));
+            CreateMap<SubscriptionRateDAO, SubscriptionRate>()
+                .ForMember(m => m.Rate, opt => opt.MapFrom(src => src.Rate))
+                .ForMember(m => m.UpdatedDate, opt => opt.MapFrom(src => src.UpdatedDate));
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using static HAS.Profile.Feature.Tribe.AddStudentToTribe;
 using static HAS.Profile.Feature.Tribe.DeleteStudentFromTribe;
+using static HAS.Profile.Feature.Tribe.UpdateSubscriptionDetails;
 using static HAS.Profile.Feature.Tribe.UpdateTribe;
 using static HAS.Profile.Feature.Tribe.UpdateTribeToNonSubscription;
 using static HAS.Profile.Feature.Tribe.UpdateTribeToSubscription;
@@ -18,11 +19,12 @@ namespace HAS.Profile.Model
         public DateTime CreatedDate { get; private set; }
         public TribeType Type { get; private set; }
         public bool IsSubscription { get; private set; }
+        public TribeSubscriptionDetails SubscriptionDetails { get; private set; }
         public IEnumerable<Member> Members { get; private set; }
 
         private Tribe() { }
 
-        private Tribe(string id, string instructorId, string name, string description, DateTime createdDate, TribeType type, bool isSubscription, IEnumerable<Member> members)
+        private Tribe(string id, string instructorId, string name, string description, DateTime createdDate, TribeType type, bool isSubscription, TribeSubscriptionDetails subDetails, IEnumerable<Member> members)
         {
             Id = id;
             InstructorId = instructorId;
@@ -31,11 +33,12 @@ namespace HAS.Profile.Model
             CreatedDate = createdDate;
             Type = type;
             IsSubscription = isSubscription;
+            SubscriptionDetails = subDetails;
             Members = members;
         }
 
-        public static Tribe Create(string id, string instructorId, string name, string description, DateTime createdDate, TribeType type, bool isSubscription, IEnumerable<Member> members)
-            => new Tribe(id, instructorId, name, description, createdDate, type, isSubscription, members);
+        public static Tribe Create(string id, string instructorId, string name, string description, DateTime createdDate, TribeType type, bool isSubscription, TribeSubscriptionDetails subDetails, IEnumerable<Member> members)
+            => new Tribe(id, instructorId, name, description, createdDate, type, isSubscription, subDetails, members);
 
         public bool Handle(UpdateTribeToSubscriptionCommand cmd)
         {
@@ -46,6 +49,8 @@ namespace HAS.Profile.Model
         {
             return SetToNonSubscription();
         }
+
+        public bool Handle(UpdateSubscriptionDetailsCommand cmd) => SubscriptionDetails.Handle(cmd);
 
         public bool Handle(AddStudentToTribeCommand cmd)
         {
@@ -73,6 +78,11 @@ namespace HAS.Profile.Model
             Description = cmd.Description;
 
             return Name == cmd.Name && Description == cmd.Description;
+        }
+
+        public string CurrentRate()
+        {
+            return (SubscriptionDetails.Rates.FirstOrDefault().Rate / 100).ToString("C");
         }
 
         private bool SetToNonSubscription()
@@ -141,5 +151,72 @@ namespace HAS.Profile.Model
 
         public static Member Create(string id, DateTime joinDate)
             => new Member(id, joinDate);
+    }
+
+    public class TribeSubscriptionDetails
+    {
+        public IEnumerable<SubscriptionRate> Rates { get; private set; }
+
+        private TribeSubscriptionDetails() { }
+
+        private TribeSubscriptionDetails(IEnumerable<SubscriptionRate> rates)
+            : this() 
+        {
+            Rates = rates;
+        }
+
+        public bool Handle(UpdateSubscriptionDetailsCommand cmd)
+        {
+            var list = Rates.ToList();
+            list.Insert(0, SubscriptionRate.AddNewRate(cmd.Rate));
+            this.Rates = list;
+
+            return Rates.FirstOrDefault().Rate == cmd.Rate;
+        }
+
+        public static TribeSubscriptionDetails Create(IEnumerable<SubscriptionRate> rates)
+            => new TribeSubscriptionDetails(rates);
+    }
+
+    public class SubscriptionRate
+    {
+        public int Rate { get; private set; }
+
+        public DateTime UpdatedDate { get; private set; }
+
+        private SubscriptionRate(int rate)
+        {
+            Rate = rate;
+            UpdatedDate = DateTime.UtcNow;
+        }
+
+        private SubscriptionRate(int rate, DateTime backDate)
+        {
+            if(backDate.ToShortDateString() == DateTime.UtcNow.ToShortDateString())
+            {
+                throw new RateBackDateExpection($"The rate {rate} for {backDate.ToShortDateString()} is not a back date as it is today.");
+            }
+
+            Rate = rate;
+            UpdatedDate = backDate;
+        }
+
+        public static SubscriptionRate AddNewRate(int rate)
+            => new SubscriptionRate(rate);
+
+        public static SubscriptionRate AddBackDateRate(int rate, DateTime backDate)
+            => new SubscriptionRate(rate, backDate);
+
+    }
+
+    public class RateBackDateExpection : Exception
+    {
+        public RateBackDateExpection() { }
+
+        public RateBackDateExpection(string message)
+            : base(message) { }
+
+        public RateBackDateExpection(string message, Exception inner)
+            : base(message, inner) { }
     }
 }

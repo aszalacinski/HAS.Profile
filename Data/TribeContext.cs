@@ -52,6 +52,9 @@ namespace HAS.Profile.Data
             [BsonElement("isSub")]
             public bool IsSubscription { get; set; }
 
+            [BsonElement("subDets")]
+            public TribeSubscriptionDetailsDAO SubscriptionDetails { get; set; }
+
             [BsonElement("members")]
             public IEnumerable<MemberDAO> Members { get; set; }
         }
@@ -66,6 +69,24 @@ namespace HAS.Profile.Data
             [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
             [BsonElement("jdate")]
             public DateTime JoinDate { get; set; }
+        }
+
+        [BsonIgnoreExtraElements]
+        public class TribeSubscriptionDetailsDAO
+        {
+            [BsonElement("rates")]
+            public List<SubscriptionRateDAO> Rates { get; set; }
+        }
+
+        [BsonIgnoreExtraElements]
+        public class SubscriptionRateDAO
+        {
+            [BsonElement("rate")]
+            public int Rate { get; set; }
+
+            [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
+            [BsonElement("udate")]
+            public DateTime UpdatedDate { get; set; }
         }
     }
 }

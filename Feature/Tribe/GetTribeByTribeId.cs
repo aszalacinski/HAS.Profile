@@ -34,6 +34,7 @@ namespace HAS.Profile.Feature.Tribe
             public DateTime CreatedDate { get; private set; }
             public string Type { get; private set; }
             public bool IsSubscription { get; private set; }
+            public TribeSubscriptionDetails SubscriptionDetails { get; private set; }
             public IEnumerable<Member> Members { get; private set; }
         }
 
@@ -51,6 +52,8 @@ namespace HAS.Profile.Feature.Tribe
                     cfg.CreateMap<TribeDAO, GetTribeByTribeIdResult>()
                         .ForMember(m => m.Type, opt => opt.MapFrom(src => Enum.GetName(typeof(TribeType), src.Type)));
                     cfg.CreateMap<MemberDAO, Member>();
+                    cfg.CreateMap<TribeSubscriptionDetailsDAO, TribeSubscriptionDetails>();
+                    cfg.CreateMap<SubscriptionRateDAO, SubscriptionRate>();
                 });
             }
 

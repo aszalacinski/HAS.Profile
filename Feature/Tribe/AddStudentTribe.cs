@@ -36,9 +36,9 @@ namespace HAS.Profile.Feature.Tribe
                 });
             }
 
-            public async Task<string> Handle(AddStudentTribeCommand request, CancellationToken cancellationToken)
+            public async Task<string> Handle(AddStudentTribeCommand cmd, CancellationToken cancellationToken)
             {
-                var tribe = Model.Tribe.Create(string.Empty, request.InstructorId, request.Name, request.Description, DateTime.UtcNow, Model.TribeType.STUDENT, false, new List<Member>());
+                var tribe = Model.Tribe.Create(string.Empty, cmd.InstructorId, cmd.Name, cmd.Description, DateTime.UtcNow, Model.TribeType.STUDENT, false, TribeSubscriptionDetails.Create(new List<SubscriptionRate>()), new List<Member>());
 
                 var mapper = new Mapper(_mapperConfiguration);
 
