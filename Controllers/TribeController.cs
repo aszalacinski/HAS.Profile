@@ -11,6 +11,7 @@ using static HAS.Profile.Feature.Tribe.AddStudentTribe;
 using static HAS.Profile.Feature.Tribe.DeleteStudentFromTribe;
 using static HAS.Profile.Feature.Tribe.DeleteTribe;
 using static HAS.Profile.Feature.Tribe.GetAllTribesByStudent;
+using static HAS.Profile.Feature.Tribe.GetMembersFromTribe;
 using static HAS.Profile.Feature.Tribe.GetTribeByInstructorId;
 using static HAS.Profile.Feature.Tribe.GetTribeByTribeId;
 using static HAS.Profile.Feature.Tribe.UpdateSubscriptionDetails;
@@ -45,6 +46,19 @@ namespace HAS.Profile.Controllers
             return Ok(result);
         }
 
+        [HttpGet("{tribeId}/stu", Name = "Get all Members from a tribe")]
+        public async Task<IActionResult> GetMembersFromTribe(string instructorId, string tribeId)
+        {
+            var result = await _mediator.Send(new GetMembersFromTribeQuery(instructorId, tribeId));
+
+            if (result.Count() <= 0)
+            {
+                return Ok(new List<string>());
+            }
+
+            return Ok(result);
+        }
+
         [HttpGet("{instructorId}/a", Name = "Get all Tribes by Instructor Id")]
         public async Task<IActionResult> GetAllTribesByInstructorId(string instructorId)
         {
@@ -56,7 +70,8 @@ namespace HAS.Profile.Controllers
             }
 
             return Ok(result);
-        }
+        } 
+
 
         [HttpPost("{instructorId}/a/stu", Name = "Add Student Tribe")]
         public async Task<IActionResult> AddStudentTribe(string instructorId, [FromBody] AddStudentTribeCommand details)
